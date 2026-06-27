@@ -78,5 +78,8 @@ if __name__ == '__main__':
 
     print("🤖 Бот 100% тегін Web Service режимінде қосылды...")
 
-    # 409 қате шықпас үшін threaded=False қылып, жалғыз ағынмен жұмыс істету
-    bot.infinity_polling(timeout=20, long_polling_timeout=10, threaded=False)
+    # Қателік тудырмас үшін құлыпты дұрыс орнату:
+    bot.threaded = False  # Боттың өзін жалғыз ағынға көшіру (409 қате болмауы үшін)
+
+    # Енді ешқандай артық аргументсіз таза шақырамыз
+    bot.infinity_polling(timeout=20, long_polling_timeout=10)
