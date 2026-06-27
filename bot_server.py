@@ -75,9 +75,20 @@ def run_health_server():
     print(f"🌍 Хелс-чек сервері {port} портында іске қосылды...")
     server.serve_forever()
 
+
+import sys
+
 if __name__ == '__main__':
+    # Библиотека ішіндегі көп тармақты (threading) өшіріп, жалғыз негізгі процесті қалдыру
+    # Бұл Render бірнеше рет іске қосса да, боттың тек 1 нұсқада жұмыс істеуін бекітеді
     server_thread = threading.Thread(target=run_health_server, daemon=True)
     server_thread.start()
 
-    print("🤖 Бот сәтті қосылды...")
-    bot.polling(none_stop=True)
+    print("🤖 Бот тек жалғыз таза ағында іске қосылуда...")
+
+    # Конфликт бермеу үшін none_stop=False қылып, қате шықса ботты қайтадан күштеп қосқызу
+    try:
+        bot.infinity_polling(timeout=10, long_polling_timeout=5)
+    except Exception as main_error:
+        print(f"Поллинг тоқтады: {main_error}")
+        sys.exit(1)
