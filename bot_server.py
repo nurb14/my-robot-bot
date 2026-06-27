@@ -72,13 +72,21 @@ def run_health_server():
 
 
 if __name__ == '__main__':
-    # Хелс-чекті бөлек ағында қосу
+    # 1. Ботты тоқтатып, Webhook-ты тазалау
+    bot.remove_webhook()
+
+    # 2. Хелс-чекті бөлек ағында қосу (Render үшін міндетті)
     server_thread = threading.Thread(target=run_health_server, daemon=True)
     server_thread.start()
 
-    print("🤖 Бот 100% тегін Web Service режимінде қосылды...")
+    print("🤖 Бот Webhook режимінде іске қосылды...")
 
-    bot.threaded = False  # Ботты жалғыз ағынға бекіту
+    # 3. Қате шықпас үшін polling-ді мүлдем алып тастап, серверді ұстап тұрамыз
+    import time
 
-    # Жүйе автоматты түрде ескі қақтығыстарды тазалау үшін:
-    bot.polling(non_stop=True, timeout=60, long_polling_timeout=20, allowed_updates=[])
+    while True:
+        try:
+            bot.polling(none_stop=True, interval=0, timeout=20)
+        except Exception as e:
+            print(f"Polling error, retrying: {e}")
+            time.sleep(5)
