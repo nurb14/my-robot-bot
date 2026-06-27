@@ -1,3 +1,5 @@
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 import telebot
 import re
@@ -115,6 +117,30 @@ def handle_robotics_chat(message):
 # =====================================================================
 # 5. БОТТЫ ІСКЕ ҚОСУ
 # =====================================================================
+# =====================================================================
+# РЕНДЕР ҮШІН КІШКЕНТАЙ ВЕБ-СЕРВЕР (ПОРТ АШУ)
+# =====================================================================
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write("Бот жұмыс істеп тұр!".encode("utf-8"))
+
+
+def run_health_server():
+    # Render автоматты түрде PORT деген айнымалы береді, егер ол болмаса 10000 портын ашамыз
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+    print(self_name := f"🌍 Хелс-чек сервері {port} портында іске қосылды...")
+    server.serve_forever()
+
+
 if __name__ == '__main__':
+    # 1. Веб-серверді фондық режимде (Thread) іске қосамыз
+    server_thread = threading.Thread(target=run_health_server, daemon=True)
+    server_thread.start()
+
+    # 2. Телеграм боттың өзін іске қосамыз
     print("🤖 Кептелмейтін, тұрақты әрі еркін бот қосылды...")
     bot.polling(none_stop=True)
