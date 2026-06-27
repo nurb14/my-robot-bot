@@ -78,8 +78,7 @@ if __name__ == '__main__':
 
     print("🤖 Бот 100% тегін Web Service режимінде қосылды...")
 
-    # Қателік тудырмас үшін құлыпты дұрыс орнату:
-    bot.threaded = False  # Боттың өзін жалғыз ағынға көшіру (409 қате болмауы үшін)
+    bot.threaded = False  # Ботты жалғыз ағынға бекіту
 
-    # Енді ешқандай артық аргументсіз таза шақырамыз
-    bot.infinity_polling(timeout=20, long_polling_timeout=10)
+    # Жүйе автоматты түрде ескі қақтығыстарды тазалау үшін:
+    bot.polling(non_stop=True, timeout=60, long_polling_timeout=20, allowed_updates=[])
